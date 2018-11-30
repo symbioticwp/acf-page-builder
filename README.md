@@ -32,6 +32,43 @@ if (file_exists($composer = __DIR__ . '/vendor/autoload.php')) {
 
 ### How-To
 
+Create your custom 'Blocks' which you would like to use in your Page Builder. 
+A Block can be for example a Slider, Image Gallery or a simple Text Block.
+ 
+Add your Blocks: functions.php
+```php
+<?php
+
+add_action('symbiotic/acf_page_builder/register_page_blocks', function($pageBuilder) {
+
+    // Create Blocks directly with an array
+	$pageBuilder->addLayout([
+		'label'      => 'Text Block',
+		'name'       => 've-text-block',
+		'display'    => 'block',
+		'sub_fields' => [
+			acf_tab(['label' => 'Details']),
+			acf_text( [ 'label' => 'Title', 'name' => 've-text-title' ] ),
+			acf_wysiwyg( [ 'label' => 'Content', 'name' => 've-text-content' ] ),
+		]
+	]);
+
+	$pageBuilder->addLayout([
+		'label'      => 'Image Block',
+		'name'       => 've-image-block',
+		'display'    => 'block',
+		'sub_fields' => [
+			acf_tab(['label' => 'Details']),
+			acf_image( [ 'label' => 'Image', 'name' => 've-image-block' ] ),
+			acf_text( [ 'label' => 'Aspect Ratio', 'name' => 've-aspect-ratio', 'default_value' => '16:9' ] ),
+		]
+	]);
+});
+
+```
+
+For complex logic or templates you can create your own Block Class which derives from
+AbstractBlock. You need to implement a `registerLayout` and a `render` method.
 
 Custom Block: app/Blocks/TemplateBlock.php
 ```php
@@ -60,7 +97,7 @@ class TemplateBlock extends AbstractBlock {
 }
 ```
 
-Add your Blocks: functions.php
+Register the TemplateBlock in your Page Builder.
 ```php
 <?php
 
@@ -68,92 +105,27 @@ use App\Blocks\TemplateBlock;
 
 add_action('symbiotic/acf_page_builder/register_page_blocks', function($pageBuilder) {
 
-
-    // Create Blocks directly with an array
-	$pageBuilder->addLayout([
-		'label'      => 'Text Block',
-		'name'       => 've-text-block',
-		'display'    => 'block',
-		'sub_fields' => [
-			acf_tab(['label' => 'Details']),
-			acf_text( [ 'label' => 'Title', 'name' => 've-text-title' ] ),
-			acf_wysiwyg( [ 'label' => 'Content', 'name' => 've-text-content' ] ),
-		]
-	]);
-
-	$pageBuilder->addLayout([
-		'label'      => 'Image Block',
-		'name'       => 've-image-block',
-		'display'    => 'block',
-		'sub_fields' => [
-			acf_tab(['label' => 'Details']),
-			acf_image( [ 'label' => 'Image', 'name' => 've-image-block' ] ),
-			acf_text( [ 'label' => 'Aspect Ratio', 'name' => 've-aspect-ratio', 'default_value' => '16:9' ] ),
-		]
-	]);
-
-	$pageBuilder->addLayout([
-		'label'      => 'Slider Block',
-		'name'       => 've-slider-block',
-		'display'    => 'block',
-		'sub_fields' => [
-			acf_tab(['label' => 'Details']),
-			acf_text( [ 'label' => 'Title', 'name' => 've-slider-title' ] ),
-			acf_text( [ 'label' => 'Aspect Ratio', 'name' => 've-slider-aspect-ratio', 'default_value' => '16:9' ] ),
-			acf_gallery([
-				'name' => 've-gallery-block',
-				'label' => 'Images',
-				'instructions' => 'Add the gallery images.',
-				'required' => true,
-				'mime_types' => 'jpeg, jpg, png',
-				'min' => 1,
-			]),
-		],
-	]);
-
-	$pageBuilder->addLayout([
-		'label'      => 'Hero Block',
-		'name'       => 've-hero-block',
-		'display'    => 'block',
-		'sub_fields' => [
-			acf_tab(['label' => 'Details']),
-			acf_textarea( [ 'label' => 'Title', 'name' => 've-hero-title' ] ),
-		],
-	]);
-
-	$pageBuilder->addLayout([
-		'label'      => 'Client Block',
-		'name'       => 've-client-block',
-		'display'    => 'block',
-		'sub_fields' => [],
-	]);
-
-	$pageBuilder->addLayout([
-		'label'      => 'Content Block',
-		'name'       => 've-content-block',
-		'display'    => 'block',
-		'sub_fields' => [
-			acf_tab(['label' => 'Details']),
-			acf_text( [ 'label' => 'Title', 'name' => 've-content-title' ] ),
-			acf_text( [ 'label' => 'Sub Title', 'name' => 've-content-subtitle' ] ),
-			acf_wysiwyg( [ 'label' => 'Content', 'name' => 've-content-text' ] ),
-		]
-	]);
-
     // Initialize Blocks with a class (for complex logic)
 	$pageBuilder->addLayout(new TemplateBlock());
 });
+```
 
+You can also make use of hooks where you adjust your configuration.
+For example lets add a Settings Tab to every existing Block.
+
+```php
+<?php
 /**
  * Add a settings Tab to every Block
  */
+ 
 add_action('symbiotic/acf_page_builder/add_layout_after', function($layoutConfig) {
 	if(!isset($layoutConfig['sub_fields'])) {
 		var_dump($layoutConfig);
 	}
 	$layoutConfig['sub_fields'] = array_merge(
 		$layoutConfig['sub_fields'],
-		generateSettingsTab()
+		addSettingsTab()
 	);
 
 	return $layoutConfig;
@@ -163,37 +135,32 @@ add_action('symbiotic/acf_page_builder/add_layout_after', function($layoutConfig
  *
  * @return array
  */
-function generateSettingsTab() {
+function addSettingsTab() {
 	return [
 		acf_tab(['label' => 'Settings']),
 		acf_text([ 'label' => 'Container Class',
 		            'name' => 've-settings-container',
-					'instructions' => 'You can define your own container classes which gets included in the Html Block Wrapper']),
-		acf_text([ 'label' => 'data-node-type',
-		            'name' => 've-settings-data-node-type',
-		            'instructions' => 'Used for JS: The node Type is generated based on the block name. For example SliderBlock. Anyway you can overwrite your Block Name here.' ]),
-
-		// For every row there will be a unique id="<id>" generated.
-		// We save it here in this <hidden> field
-		acf_randomstring(['label' => 'row-id','name' => 'row-id'])
+					'instructions' => 'You can define your own container classes which gets included in the Html Block Wrapper'])
 	];
 }
+```
 
+You can use the `set_location` hook to customize where you want to display
+your Page Builder. For Example lets enable the Page Builder also for `portfolio` 
+and `services` post types.
 
-/** ======================================================
- *  For which post Types you want to display your Page Builder?
- *  See also AcfPageBuilder getLocations() for default locations
- *
- * Examples:
- * $location[] = [acf_location('post_type', 'portfolio')]; // OR OPERATOR
- *  ======================================================
- */
+```php
+<?php
 add_action('symbiotic/acf_page_builder/set_location', function($location) {
 	$location[] = [acf_location('post_type', 'portfolio')];
 	$location[] = [acf_location('post_type', 'services')];
 	return $location;
 });
-````
+```
+
+### Additional Info
+
+* 'Blocks' are comparable to components in react or widgets in Elementor/Wordpress.
 
 
 ### Roadmap
