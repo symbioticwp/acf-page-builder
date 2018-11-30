@@ -1,0 +1,39 @@
+{
+  "name": "symbioticwp/acf-page-builder",
+  "type": "package",
+  "license": "MIT",
+  "description": "ACF Page Builder using Wordplate ACF and ACF Flexible Content",
+  "homepage": "https://github.com/symbioticwp/acf-page-builder",
+  "authors": [
+    {
+      "name": "Kevin Kernegger",
+      "email": "hello@regenrek.at",
+      "homepage": "https://github.com/symbioticwp"
+    }
+  ],
+  "keywords": [
+    "wordpress"
+  ],
+  "support": {
+    "issues": "https://github.com/symbioticwp/acf-page-builder/issues"
+  },
+  "require": {
+    "php": ">=7.0",
+    "composer/installers": "^1.0",
+    "wordplate/acf": "^6.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Symbiotic\\AcfPageBuilder\\": "src/"
+    },
+    "files": [
+      "acf-page-builder.php"
+    ]
+  },
+  "minimum-stability": "dev",
+  "scripts": {
+    "test": [
+      "phpcs --extensions=php --ignore=vendor/ ."
+    ]
+  }
+}
