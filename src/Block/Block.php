@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Symbiotic\AcfPageBuilder\Blocks;
+namespace Symbiotic\AcfPageBuilder\Block;
 
 
 class Block extends AbstractBlock {

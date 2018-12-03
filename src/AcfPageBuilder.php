@@ -1,9 +1,8 @@
 <?php
 namespace Symbiotic\AcfPageBuilder;
 
-use Mj\Frontend\Widgets\AbstractWidget;
-use Symbiotic\AcfPageBuilder\Blocks\AbstractBlock;
-use Symbiotic\AcfPageBuilder\Blocks\Block;
+use Symbiotic\AcfPageBuilder\Block\AbstractBlock;
+use Symbiotic\AcfPageBuilder\Block\Block;
 
 class AcfPageBuilder {
 
@@ -125,7 +124,7 @@ class AcfPageBuilder {
 	}
 
 	public function getBlocks() {
-		return apply_filters('mj/frontend/visual-editor/set_layout_blocks', $this->_layouts);
+		return apply_filters('symbiotic/frontend/visual-editor/set_layout_blocks', $this->_layouts);
 	}
 	/**
 	 *

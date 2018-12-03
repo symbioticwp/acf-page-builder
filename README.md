@@ -1,4 +1,4 @@
-# Advanced Custom Feilds (ACF) Page Builder
+# Advanced Custom Fields (ACF) Page Builder
 ACF Page Builder using [Wordplate ACF](https://github.com/wordplate/acf) and [ACF Flexible Content Field](http://www.advancedcustomfields.com/add-ons/flexible-content-field/)
 
 ### Requirements

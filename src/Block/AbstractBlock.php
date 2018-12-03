@@ -1,5 +1,5 @@
 <?php
-namespace Symbiotic\AcfPageBuilder\Blocks;
+namespace Symbiotic\AcfPageBuilder\Block;
 
 abstract class AbstractBlock {
 
