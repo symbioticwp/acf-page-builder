@@ -40,7 +40,9 @@ abstract class AbstractBlock {
 	public function render() {
 		if($this->getTemplateName()) {
 			$this->getWrapperStart();
+			$this->getContainerStart();
 			$this->includeTemplate();
+			$this->getContainerEnd();
 			$this->getWrapperEnd();
 		}
 	}
@@ -142,35 +144,44 @@ abstract class AbstractBlock {
 		$this->_path = $path;
 	}
 
-	public function getWrapperStart() {
-		if($this->hasWrapper()) {
-
-			// 've-NAME-block.php
-			$nodeType = explode('-', $this->getTemplateName());
-
-			if(count($nodeType) < 1) {
-				throw new \Exception('Blockname couldn\'t be set. Please check Name');
-			}
-
-			$blockname = field('ve-settings-data-node-type') ?
-				field('ve-settings-data-node-type') :
-				ucfirst($nodeType[1]) . 'Block';
-
-			echo '<div 
-				data-node-type="'.$blockname.'"
-				id="row-'.field('row-id').'" 
-				class="page-block '. field('ve-settings-container') .'">';
+	public function getContainerStart() {
+		if($this->hasContainer()) {
+			echo '<div class="'. field('ve-settings-container') .'">';
 		}
 	}
 
-	public function getWrapperEnd() {
-		if($this->hasWrapper($this->getTemplateName())) {
+	public function getContainerEnd() {
+		if($this->hasContainer()) {
 			echo '</div>';
 		}
 	}
 
-	public function hasWrapper() {
+	public function hasContainer() {
 		return get_sub_field('ve-settings-container') !== null;
+	}
+
+	public function getWrapperStart() {
+		$wrapperClass = field('ve-settings-wrapper') ? field('ve-settings-wrapper'):'';
+
+		// 've-NAME-block.php
+		$nodeType = explode('-', $this->getTemplateName());
+
+		if(count($nodeType) < 1) {
+			throw new \Exception('Blockname couldn\'t be set. Please check Name');
+		}
+
+		$blockname = field('ve-settings-data-node-type') ?
+			field('ve-settings-data-node-type') :
+			ucfirst($nodeType[1]) . 'Block';
+
+		echo '<div 
+			data-node-type="'.$blockname.'"
+			id="row-'.field('row-id').'" 
+			class="page-block '. $wrapperClass .'">';
+	}
+
+	public function getWrapperEnd() {
+		echo '</div>';
 	}
 
 	public function getActLayouts() {
