@@ -95,6 +95,7 @@ class AcfPageBuilder {
 			// Check if we're inside the main loop in a single post page.
 			if ( in_the_loop() && is_main_query() && have_rows('mj-visual-editor-flexible') ) {
 				ob_start();
+
 					// loop through the rows of data
 				while ( have_rows('mj-visual-editor-flexible') ) : the_row();
 					$this->renderBlockTemplates();
