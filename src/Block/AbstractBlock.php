@@ -174,7 +174,7 @@ abstract class AbstractBlock {
 			field('ve-settings-data-node-type') :
 			ucfirst($nodeType[1]) . 'Block';
 
-		
+
 		$disable_animation = field('ve-settings-disable-animation') ? field('ve-settings-disable-animation'): 0;
 
 		echo '<div 
